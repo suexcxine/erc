@@ -29,7 +29,7 @@ get_node_index(Mapping, Command) ->
 
 get_node_by_slot([], _Slot) ->
     undefined;
-get_node_by_slot([{Start, End, Index, _, _}], Slot) when Start =< Slot andalso Slot =< End ->
+get_node_by_slot([{Start, End, Index, _, _}|_], Slot) when Start =< Slot andalso Slot =< End ->
     Index;
 get_node_by_slot([_|T], Slot) ->
     get_node_by_slot(T, Slot).

@@ -70,8 +70,10 @@
 
 %% API.
 -spec hash(string()) -> integer().
-hash(Key) ->
-    crc16(Key) rem ?REDIS_CLUSTER_HASH_SLOTS.
+hash(Key) when is_list(Key) ->
+    crc16(Key) rem ?REDIS_CLUSTER_HASH_SLOTS;
+hash(Key) when is_binary(Key) ->
+    hash(binary_to_list(Key)).
 
 -spec crc16(string()) -> integer().
 crc16(Key) ->
