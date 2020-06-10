@@ -15,8 +15,8 @@ parse_cluster_slots(ClusterInfo) ->
     parse_cluster_slots(ClusterInfo, 1, []).
 
 parse_cluster_slots([[StartSlot, EndSlot | [[MasterAddress, MasterPort | _] | _]] | T], Index, Acc) ->
-    Node = {binary_to_integer(StartSlot), binary_to_integer(EndSlot), Index,
-        MasterAddress, binary_to_integer(MasterPort)},
+    Node = {ensure_integer(StartSlot), ensure_integer(EndSlot), Index,
+        MasterAddress, ensure_integer(MasterPort)},
     parse_cluster_slots(T, Index + 1, [Node | Acc]);
 parse_cluster_slots([], _Index, Acc) ->
     lists:reverse(Acc).
@@ -49,4 +49,11 @@ get_hash_tag(Key) ->
         {match, [HashTag]} when HashTag =/= <<>> -> HashTag;
         _ -> undefined
     end.
+
+ensure_integer(Val) when is_binary(Val) ->
+    binary_to_integer(Val);
+ensure_integer(Val) when is_list(Val) ->
+    list_to_integer(Val);
+ensure_integer(Val) when is_integer(Val) ->
+    Val.
 
