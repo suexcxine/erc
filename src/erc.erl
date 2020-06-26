@@ -14,9 +14,9 @@ get_cluster_slots([{Host, Port}|T], CallbackMod) ->
 parse_cluster_slots(ClusterInfo) ->
     parse_cluster_slots(ClusterInfo, 1, []).
 
-parse_cluster_slots([[StartSlot, EndSlot | [[MasterAddress, MasterPort | _] | _]] | T], Index, Acc) ->
+parse_cluster_slots([[StartSlot, EndSlot | [[PrimaryAddress, PrimaryPort | _] | _]] | T], Index, Acc) ->
     Node = {ensure_integer(StartSlot), ensure_integer(EndSlot), Index,
-        MasterAddress, ensure_integer(MasterPort)},
+        PrimaryAddress, ensure_integer(PrimaryPort)},
     parse_cluster_slots(T, Index + 1, [Node | Acc]);
 parse_cluster_slots([], _Index, Acc) ->
     lists:reverse(Acc).

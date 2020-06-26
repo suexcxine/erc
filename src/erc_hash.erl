@@ -71,7 +71,9 @@
 %% API.
 -spec hash(string()) -> integer().
 hash(Key) when is_list(Key) ->
-    crc16(Key) rem ?REDIS_CLUSTER_HASH_SLOTS;
+    % ensure Key2 is a charlist, not iolist
+    Key2 = binary_to_list(iolist_to_binary(Key)),
+    crc16(Key2) rem ?REDIS_CLUSTER_HASH_SLOTS;
 hash(Key) when is_binary(Key) ->
     hash(binary_to_list(Key)).
 
