@@ -12,13 +12,13 @@ get_cluster_slots([{Host, Port}|T], CallbackMod) ->
     end.
 
 parse_cluster_slots(ClusterInfo) ->
-    parse_cluster_slots(ClusterInfo, 1, []).
+    parse_cluster_slots(ClusterInfo, []).
 
-parse_cluster_slots([[StartSlot, EndSlot | [[PrimaryAddress, PrimaryPort | _] | _]] | T], Index, Acc) ->
-    Node = {ensure_integer(StartSlot), ensure_integer(EndSlot), Index,
+parse_cluster_slots([[StartSlot, EndSlot | [[PrimaryAddress, PrimaryPort | _] | _]] | T], Acc) ->
+    Node = {ensure_integer(StartSlot), ensure_integer(EndSlot),
         PrimaryAddress, ensure_integer(PrimaryPort)},
-    parse_cluster_slots(T, Index + 1, [Node | Acc]);
-parse_cluster_slots([], _Index, Acc) ->
+    parse_cluster_slots(T, [Node | Acc]);
+parse_cluster_slots([], Acc) ->
     lists:reverse(Acc).
 
 get_node_index(Mapping, Command) ->
@@ -29,8 +29,8 @@ get_node_index(Mapping, Command) ->
 
 get_node_by_slot([], _Slot) ->
     undefined;
-get_node_by_slot([{Start, End, Index, _, _}|_], Slot) when Start =< Slot andalso Slot =< End ->
-    Index;
+get_node_by_slot([{Start, End, Host, Port}|_], Slot) when Start =< Slot andalso Slot =< End ->
+    {Host, Port};
 get_node_by_slot([_|T], Slot) ->
     get_node_by_slot(T, Slot).
 
